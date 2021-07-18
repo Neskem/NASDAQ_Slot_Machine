@@ -2,7 +2,7 @@ package database
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Inject injects database to gin context
