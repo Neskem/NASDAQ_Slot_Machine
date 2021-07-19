@@ -9,5 +9,6 @@ func RouteUsers(r *gin.RouterGroup) {
 	posts := r.Group("/ypa")
 	{
 		posts.GET("/users/:id", controller.NewUsersController().GetOne)
+		posts.POST("/users/register/", controller.NewUsersController().RegisterOne)
 	}
 }
