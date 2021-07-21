@@ -1,0 +1,24 @@
+host: localhost:8080
+info:
+  contact:
+    name: Flynn Sun
+  description: Gin swagger
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Gin swagger
+  version: "1.0"
+paths:
+  /hello:
+    get:
+      operationId: "1"
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - Hello
+swagger: "2.0"
