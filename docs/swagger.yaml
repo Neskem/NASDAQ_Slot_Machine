@@ -1,3 +1,17 @@
+definitions:
+  controller.Register:
+    properties:
+      account:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - account
+    - email
+    - password
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -9,9 +23,15 @@ info:
   title: Gin swagger
   version: "1.0"
 paths:
-  /hello:
+  /users/{id}:
     get:
-      operationId: "1"
+      parameters:
+      - default: 1
+        description: id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - text/plain
       responses:
@@ -20,5 +40,23 @@ paths:
           schema:
             type: string
       tags:
-      - Hello
+      - users
+  /users/register:
+    post:
+      parameters:
+      - description: JSON data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - users
 swagger: "2.0"

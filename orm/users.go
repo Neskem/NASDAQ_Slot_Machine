@@ -30,7 +30,7 @@ func LoginOneUser(account string, password string) (*models.Users, error) {
 }
 
 func RegisterOneUser(account string, password string, email string) error {
-	if CheckOneUser(account) {
+	if !CheckOneUser(account) {
 		return fmt.Errorf("User exists.")
 	}
 	user := models.Users{

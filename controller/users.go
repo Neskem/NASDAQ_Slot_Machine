@@ -18,6 +18,13 @@ func CreateUsersController() UsersController {
 	return UsersController{}
 }
 
+// GetOne RouteUsers @Summary
+// @Tags users
+// @version 1.0
+// @produce text/plain
+// @param id path int true "id" default(1)
+// @Success 200 string string 成功後返回的值
+// @Router /users/{id} [get]
 func (u UsersController) GetOne(c *gin.Context) {
 	id := c.Params.ByName("id")
 	fmt.Println("id: ", id)
@@ -65,6 +72,13 @@ func (u UsersController) LoginOne(c *gin.Context) {
 	return
 }
 
+// RegisterOne GetOne RouteUsers @Summary
+// @Tags users
+// @version 1.0
+// @produce application/json
+// @param body body Register true "JSON data" default({"account": "111", "password": "222", "email": "333"})
+// @Success 200 string string 成功後返回的值
+// @Router /users/register [post]
 func(u UsersController) RegisterOne(c *gin.Context) {
 	var form Register
 	bindErr := c.BindJSON(&form)
