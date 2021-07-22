@@ -23,7 +23,7 @@ func CreateUsersController() UsersController {
 // @version 1.0
 // @produce text/plain
 // @param id path int true "id" default(1)
-// @Success 200 string string 成功後返回的值
+// @Success 200 string string successful return data
 // @Router /users/{id} [get]
 func (u UsersController) GetOne(c *gin.Context) {
 	id := c.Params.ByName("id")
@@ -77,32 +77,32 @@ func (u UsersController) LoginOne(c *gin.Context) {
 // @version 1.0
 // @produce application/json
 // @param body body Register true "JSON data" default({"account": "111", "password": "222", "email": "333"})
-// @Success 200 string string 成功後返回的值
+// @Success 200 string string successful return value
 // @Router /users/register [post]
 func(u UsersController) RegisterOne(c *gin.Context) {
 	var form Register
 	bindErr := c.BindJSON(&form)
 	if bindErr == nil {
-		// 用户注册
+		// User regist
 		err := service.RegisterUser(form.Account, form.Password, form.Email)
 
 		if err == nil {
 			c.JSON(http.StatusOK, gin.H{
 				"status": 0,
-				"msg":    "success ",
+				"msg":    "success Register",
 				"data":   nil,
 			})
 		} else {
 			c.JSON(http.StatusOK, gin.H{
 				"status": -1,
-				"msg":    "注册失败" + err.Error(),
+				"msg":    "Register Failed" + err.Error(),
 				"data":   nil,
 			})
 		}
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"status": -1,
-			"msg":    "用户注册解析数据失败" + bindErr.Error(),
+			"msg":    "Failed to parse register data" + bindErr.Error(),
 			"data":   nil,
 		})
 	}

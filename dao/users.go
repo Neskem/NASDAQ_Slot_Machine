@@ -1,4 +1,4 @@
-package orm
+package dao
 
 import (
 	"NASDAQ_Slot_Machine/database"

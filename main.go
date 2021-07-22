@@ -1,10 +1,10 @@
 package main
 
 import (
-	v1 "NASDAQ_Slot_Machine/api/v1"
 	"NASDAQ_Slot_Machine/database"
 	_ "NASDAQ_Slot_Machine/docs"
 	"NASDAQ_Slot_Machine/models"
+	v1 "NASDAQ_Slot_Machine/route/v1"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
