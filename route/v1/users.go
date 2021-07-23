@@ -12,5 +12,6 @@ func RouteUsers(r *gin.Engine) {
 	{
 		posts.GET("/:id", controller.NewUsersController().GetOne)
 		posts.POST("/register/", controller.NewUsersController().RegisterOne)
+		posts.POST("/login/", controller.OldUsersController().LoginOne)
 	}
 }

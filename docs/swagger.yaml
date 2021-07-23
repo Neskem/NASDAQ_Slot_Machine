@@ -1,4 +1,14 @@
 definitions:
+  controller.Login:
+    properties:
+      account:
+        type: string
+      password:
+        type: string
+    required:
+    - account
+    - password
+    type: object
   controller.Register:
     properties:
       account:
@@ -41,7 +51,25 @@ paths:
             type: string
       tags:
       - users
-  /users/register:
+  /users/login/:
+    post:
+      parameters:
+      - description: JSON data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - users
+  /users/register/:
     post:
       parameters:
       - description: JSON data

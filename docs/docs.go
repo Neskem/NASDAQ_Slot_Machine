@@ -30,7 +30,36 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/users/register": {
+        "/users/login/": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "parameters": [
+                    {
+                        "description": "JSON data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.Login"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/register/": {
             "post": {
                 "produces": [
                     "application/json"
@@ -89,6 +118,21 @@ var doc = `{
         }
     },
     "definitions": {
+        "controller.Login": {
+            "type": "object",
+            "required": [
+                "account",
+                "password"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "controller.Register": {
             "type": "object",
             "required": [

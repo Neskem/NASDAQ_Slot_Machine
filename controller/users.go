@@ -14,6 +14,10 @@ func NewUsersController() UsersController {
 	return UsersController{}
 }
 
+func OldUsersController() UsersController {
+	return UsersController{}
+}
+
 func CreateUsersController() UsersController {
 	return UsersController{}
 }
@@ -56,6 +60,13 @@ type Register struct {
 	Email string `json:"email" binding:"required"`
 }
 
+// LoginOne RouteUsers @Summary
+// @Tags users
+// @version 1.0
+// @produce application/json
+// @param body body Login true "JSON data" default({"account": "111", "password": "222"})
+// @Success 200 string string successful login
+// @Router /users/login/ [post]
 func (u UsersController) LoginOne(c *gin.Context) {
 	form := &Login{}
 	if c.Bind(form) == nil {
@@ -72,13 +83,13 @@ func (u UsersController) LoginOne(c *gin.Context) {
 	return
 }
 
-// RegisterOne GetOne RouteUsers @Summary
+// RegisterOne RouteUsers @Summary
 // @Tags users
 // @version 1.0
 // @produce application/json
 // @param body body Register true "JSON data" default({"account": "111", "password": "222", "email": "333"})
 // @Success 200 string string successful return value
-// @Router /users/register [post]
+// @Router /users/register/ [post]
 func(u UsersController) RegisterOne(c *gin.Context) {
 	var form Register
 	bindErr := c.BindJSON(&form)
