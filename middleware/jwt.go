@@ -12,21 +12,21 @@ import (
 )
 
 var (
-	TokenExpired     error  = errors.New("Token is expired")
-	TokenNotValidYet error  = errors.New("Token not active yet")
-	TokenMalformed   error  = errors.New("That's not even a token")
-	TokenInvalid     error  = errors.New("Couldn't handle this token:")
-	SignKey          string = "bgbiao.top" // 签名信息应该设置成动态从库中获取
+	TokenExpired     error  = errors.New("token is expired")
+	TokenNotValidYet error  = errors.New("token not active yet")
+	TokenMalformed   error  = errors.New("that's not even a token")
+	TokenInvalid     error  = errors.New("couldn't handle this token")
+	SignKey          string = "Flynn.Sun" // Sign info.
 )
 
-// JWTAuth 中间件，检查token
+// JWTAuth Middleware, check token
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("token")
 		if token == "" {
 			c.JSON(http.StatusOK, gin.H{
 				"status": -1,
-				"msg":    "请求未携带token，无权限访问",
+				"msg":    "Do not detect any token, you can't visit this site.",
 				"data":   nil,
 			})
 			c.Abort()
@@ -35,22 +35,22 @@ func JWTAuth() gin.HandlerFunc {
 
 		log.Print("get token: ", token)
 		j := NewJWT()
-		// 解析token中包含的相关信息
+		// Parse info of token.
 		claims, err := j.ParserToken(token)
 
 		fmt.Println(claims, err)
 		if err != nil {
-			// token过期
+			// token expiry
 			if err == TokenExpired {
 				c.JSON(http.StatusOK, gin.H{
 					"status": -1,
-					"msg":    "token授权已过期，请重新申请授权",
+					"msg":    "Token already expired, please register again.",
 					"data":   nil,
 				})
 				c.Abort()
 				return
 			}
-			// 其他错误
+			// Other errors
 			c.JSON(http.StatusOK, gin.H{
 				"status": -1,
 				"msg":    err.Error(),
@@ -60,34 +60,33 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 
-		// 解析到具体的claims相关信息
+		// Get detail info of claims
 		c.Set("claims", claims)
 
 	}
 }
 
-// JWT基本数据结构
-// 签名的signkey
+// JWT Basic structure of jwt
 type JWT struct {
 	SigningKey []byte
 }
 
-// 定义载荷
+// CustomClaims 定义载荷
 type CustomClaims struct {
-	Name  string `json:"userName"`
+	Account  string `json:"account"`
 	Email string `json:"email"`
-	// StandardClaims结构体实现了Claims接口(Valid()函数)
+	// StandardClaims shows the interface ofClaims(Valid()function)
 	jwt.StandardClaims
 }
 
-// 初始化JWT实例
+// NewJWT jwt instance
 func NewJWT() *JWT {
 	return &JWT{
 		[]byte(GetSignKey()),
 	}
 }
 
-// 获取signkey(这里写死成一个变量了)
+// GetSignKey return sign key
 func GetSignKey() string {
 	return SignKey
 }

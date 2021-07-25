@@ -33,9 +33,14 @@ info:
   title: Gin swagger
   version: "1.0"
 paths:
-  /users/{id}:
+  /users/auth/{id}:
     get:
       parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
       - default: 1
         description: id
         in: path
@@ -43,7 +48,7 @@ paths:
         required: true
         type: integer
       produces:
-      - text/plain
+      - application/json
       responses:
         "200":
           description: OK

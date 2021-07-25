@@ -1,11 +1,16 @@
 package controller
 
 import (
+	"NASDAQ_Slot_Machine/middleware"
+	"NASDAQ_Slot_Machine/models"
 	"NASDAQ_Slot_Machine/service"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type UsersController struct {}
@@ -25,11 +30,16 @@ func CreateUsersController() UsersController {
 // GetOne RouteUsers @Summary
 // @Tags users
 // @version 1.0
-// @produce text/plain
+// @produce application/json
+// @param token header string true "token"
 // @param id path int true "id" default(1)
 // @Success 200 string string successful return data
-// @Router /users/{id} [get]
+// @Router /users/auth/{id} [get]
 func (u UsersController) GetOne(c *gin.Context) {
+	claims := c.MustGet("claims").(*middleware.CustomClaims)
+	if claims == nil {
+		c.AbortWithStatus(401)
+	}
 	id := c.Params.ByName("id")
 	fmt.Println("id: ", id)
 
@@ -44,7 +54,12 @@ func (u UsersController) GetOne(c *gin.Context) {
 		c.AbortWithStatus(404)
 		fmt.Println(err.Error())
 	} else {
-		c.JSON(http.StatusOK, &userOne)
+		c.JSON(http.StatusOK, gin.H{
+			"status": 0,
+			"msg":    "token有效",
+			"data":   claims,
+			"user": &userOne,
+		})
 	}
 	return
 }
@@ -60,6 +75,10 @@ type Register struct {
 	Email string `json:"email" binding:"required"`
 }
 
+type LoginResult struct {
+	Account string `json:"account" binding:"required"`
+	Token string `json:"token" binding:"required"`
+}
 // LoginOne RouteUsers @Summary
 // @Tags users
 // @version 1.0
@@ -78,7 +97,7 @@ func (u UsersController) LoginOne(c *gin.Context) {
 		c.AbortWithStatus(404)
 		fmt.Println(err.Error())
 	} else {
-		c.JSON(http.StatusOK, &userOne)
+		generateToken(c, userOne)
 	}
 	return
 }
@@ -117,4 +136,46 @@ func(u UsersController) RegisterOne(c *gin.Context) {
 			"data":   nil,
 		})
 	}
+}
+
+
+// token生成器
+// md 為上面定義好的middleware中介軟體
+func generateToken(c *gin.Context, user *models.Users) {
+	// 構造SignKey: 簽名和解簽名需要使用一個值
+	j := middleware.NewJWT()
+
+	// 構造使用者claims資訊(負荷)
+	claims := middleware.CustomClaims{
+		Account:  user.Account,
+		Email: user.Email,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: int64(time.Now().Unix() - 1000), // Effective date
+			ExpiresAt: int64(time.Now().Unix() + 3600), // Expired date
+			Issuer:    "Flynn.Sun",                    // Signer
+		},
+	}
+
+	// Generate token from claim
+	token, err := j.CreateToken(claims)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": -1,
+			"msg":    err.Error(),
+			"data":   nil,
+		})
+	}
+
+	log.Println("Token: ", token)
+	data := LoginResult {
+		Account:  user.Account,
+		Token: token,
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": 0,
+		"msg":    "Successfully login.",
+		"data":   data,
+	})
 }
