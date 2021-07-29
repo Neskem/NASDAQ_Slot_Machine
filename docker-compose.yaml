@@ -17,7 +17,7 @@ services:
       - APP_DB_PASS=password
       - APP_DB_NAME=gorm
     volumes:
-    - ./db:/docker-entrypoint-initdb.d/
+    - data:/var/lib/postgresql/data/pgdata
     networks:
       - backend-bridge
     restart: always
@@ -47,3 +47,6 @@ services:
 networks:
   backend-bridge:
     driver: bridge
+
+volumes:
+  data: {}
