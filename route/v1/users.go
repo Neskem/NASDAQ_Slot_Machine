@@ -4,8 +4,11 @@ import (
 	"NASDAQ_Slot_Machine/controller"
 	_ "NASDAQ_Slot_Machine/docs"
 	"NASDAQ_Slot_Machine/middleware"
+	cache "github.com/chenyahui/gin-cache"
+	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
+	"time"
 )
 
 
@@ -18,7 +21,7 @@ func RequestIDMiddleware(ctx *gin.Context) {
 
 
 
-func RouteUsers(r *gin.Engine) {
+func RouteUsers(r *gin.Engine, m *persist.RedisStore) {
 	posts := r.Group("/users")
 	posts.Use(RequestIDMiddleware)
 	{
@@ -30,6 +33,6 @@ func RouteUsers(r *gin.Engine) {
 	auth.Use(middleware.JWTAuth())
 	auth.Use(RequestIDMiddleware)
 	{
-		auth.GET("/:id", controller.NewUsersController().GetOne)
+		auth.GET("/:id", cache.CacheByRequestURI(m, 2*time.Second), controller.NewUsersController().GetOne)
 	}
 }

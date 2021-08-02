@@ -7,7 +7,9 @@ import (
 	"NASDAQ_Slot_Machine/models"
 	v1 "NASDAQ_Slot_Machine/route/v1"
 	"fmt"
+	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -55,7 +57,13 @@ func main() {
 			"message": "hello " + name,
 		})
 	})
-	v1.RouteUsers(app)
+	// memoryStore := persist.NewMemoryStore(1 * time.Minute)
+	redisStore := persist.NewRedisStore(redis.NewClient(&redis.Options{
+		Network: "tcp",
+		Addr:    "redis:6379",
+		DB: 0,
+	}))
+	v1.RouteUsers(app, redisStore)
 	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
 	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	err2 := app.Run(":" + port)
