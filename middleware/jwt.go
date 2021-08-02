@@ -148,7 +148,7 @@ func (j *JWT) ParserToken(tokenString string) (*CustomClaims, error) {
 
 }
 
-// 更新Token
+// UpdateToken Update token
 func (j *JWT) UpdateToken(tokenString string) (string, error) {
 	// TimeFunc为一个默认值是time.Now的当前时间变量,用来解析token后进行过期时间验证
 	// 可以使用其他的时间值来覆盖

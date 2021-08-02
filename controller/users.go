@@ -56,7 +56,7 @@ func (u UsersController) GetOne(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"status": 0,
-			"msg":    "token有效",
+			"msg":    "token is effective",
 			"data":   claims,
 			"user": &userOne,
 		})
@@ -70,9 +70,9 @@ type Login struct {
 }
 
 type Register struct {
-	Account string `json:"account" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Email string `json:"email" binding:"required"`
+	Account string `json:"account" binding:"required" example:"account"`
+	Password string `json:"password" binding:"required" example:"password"`
+	Email string `json:"email" binding:"required" example:"test123@gmail.com"`
 }
 
 type LoginResult struct {
@@ -106,7 +106,7 @@ func (u UsersController) LoginOne(c *gin.Context) {
 // @Tags users
 // @version 1.0
 // @produce application/json
-// @param body body Register true "JSON data" default({"account": "111", "password": "222", "email": "333"})
+// @param register body Register true "register"
 // @Success 200 string string successful return value
 // @Router /users/register/ [post]
 func(u UsersController) RegisterOne(c *gin.Context) {

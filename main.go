@@ -3,6 +3,7 @@ package main
 import (
 	"NASDAQ_Slot_Machine/database"
 	_ "NASDAQ_Slot_Machine/docs"
+	"NASDAQ_Slot_Machine/middleware"
 	"NASDAQ_Slot_Machine/models"
 	v1 "NASDAQ_Slot_Machine/route/v1"
 	"fmt"
@@ -33,6 +34,7 @@ func main() {
 	port := os.Getenv("PORT")
 	dbConfig := os.Getenv("DB_CONFIG")
 	app := gin.Default()
+	app.Use(middleware.CORSMiddleware())
 	db, err1 := database.Initialize(dbConfig)
 	if err1 != nil {
 		fmt.Println("get db failed:", err)

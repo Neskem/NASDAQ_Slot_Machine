@@ -2,7 +2,7 @@ version: '3.5'
 services:
   postgresql:
     container_name: postgresql
-    image: postgres:13.1
+    image: postgres:12.7
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
       timeout: 45s
@@ -17,7 +17,7 @@ services:
       - APP_DB_PASS=password
       - APP_DB_NAME=gorm
     volumes:
-    - data:/var/lib/postgresql/data/pgdata
+    - ./db:/docker-entrypoint-initdb.d/
     networks:
       - backend-bridge
     restart: always
