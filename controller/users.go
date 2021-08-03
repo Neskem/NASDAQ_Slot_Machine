@@ -65,8 +65,8 @@ func (u UsersController) GetOne(c *gin.Context) {
 }
 
 type Login struct {
-	Account string `json:"account" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Account string `json:"account" example:"000" binding:"required"`
+	Password string `json:"password" example:"000" binding:"required"`
 }
 
 type Register struct {
@@ -79,11 +79,23 @@ type LoginResult struct {
 	Account string `json:"account" binding:"required"`
 	Token string `json:"token" binding:"required"`
 }
+
+type LoginResponse struct {
+    Status int64 `json:"status" example:"-1"`
+    Msg string `json:"msg" example:"Successfully login."`
+    Data LoginResult `json:"data"`
+}
+
+type RegisterResponse struct {
+	Status int64 `json:"status" example:"0"`
+	Msg string `json:"msg" example:"Successfully login."`
+	Data string `json:"data"`
+}
 // LoginOne RouteUsers @Summary
 // @Tags users
 // @version 1.0
 // @produce application/json
-// @param body body Login true "JSON data" default({"account": "111", "password": "222"})
+// @param body body Login true "JSON data"
 // @Success 200 string string successful login
 // @Router /users/login/ [post]
 func (u UsersController) LoginOne(c *gin.Context) {
@@ -107,7 +119,7 @@ func (u UsersController) LoginOne(c *gin.Context) {
 // @version 1.0
 // @produce application/json
 // @param register body Register true "register"
-// @Success 200 string string successful return value
+// @Success 200 {array} RegisterResponse
 // @Router /users/register/ [post]
 func(u UsersController) RegisterOne(c *gin.Context) {
 	var form Register
@@ -117,23 +129,23 @@ func(u UsersController) RegisterOne(c *gin.Context) {
 		err := service.RegisterUser(form.Account, form.Password, form.Email)
 
 		if err == nil {
-			c.JSON(http.StatusOK, gin.H{
-				"status": 0,
-				"msg":    "success Register",
-				"data":   nil,
+			c.JSON(http.StatusOK, RegisterResponse {
+				Status: 0,
+				Msg: "Success Register",
+				Data: "",
 			})
 		} else {
-			c.JSON(http.StatusOK, gin.H{
-				"status": -1,
-				"msg":    "Register Failed" + err.Error(),
-				"data":   nil,
+			c.JSON(http.StatusOK, RegisterResponse {
+				Status: -1,
+				Msg: "Register Failed" + err.Error(),
+				Data: "",
 			})
 		}
 	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"status": -1,
-			"msg":    "Failed to parse register data" + bindErr.Error(),
-			"data":   nil,
+		c.JSON(http.StatusOK, RegisterResponse {
+			Status: -1,
+			Msg: "Failed to parse register data" + bindErr.Error(),
+			Data: "",
 		})
 	}
 }
@@ -160,10 +172,10 @@ func generateToken(c *gin.Context, user *models.Users) {
 	token, err := j.CreateToken(claims)
 
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": -1,
-			"msg":    err.Error(),
-			"data":   nil,
+		c.JSON(http.StatusOK, LoginResponse{
+			-1,
+			err.Error(),
+			 LoginResult{},
 		})
 	}
 
@@ -173,9 +185,9 @@ func generateToken(c *gin.Context, user *models.Users) {
 		Token: token,
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": 0,
-		"msg":    "Successfully login.",
-		"data":   data,
+	c.JSON(http.StatusOK, LoginResponse{
+		0,
+		"Successfully login.",
+		data,
 	})
 }

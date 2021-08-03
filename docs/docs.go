@@ -104,8 +104,8 @@ var doc = `{
                 ],
                 "parameters": [
                     {
-                        "description": "JSON data",
-                        "name": "body",
+                        "description": "register",
+                        "name": "register",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -117,7 +117,10 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controller.RegisterResponse"
+                            }
                         }
                     }
                 }
@@ -133,10 +136,12 @@ var doc = `{
             ],
             "properties": {
                 "account": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "000"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "000"
                 }
             }
         },
@@ -149,13 +154,32 @@ var doc = `{
             ],
             "properties": {
                 "account": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "account"
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "test123@gmail.com"
                 },
                 "password": {
+                    "type": "string",
+                    "example": "password"
+                }
+            }
+        },
+        "controller.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
                     "type": "string"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "Successfully login."
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 0
                 }
             }
         }

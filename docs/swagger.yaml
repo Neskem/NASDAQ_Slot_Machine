@@ -2,8 +2,10 @@ definitions:
   controller.Login:
     properties:
       account:
+        example: "000"
         type: string
       password:
+        example: "000"
         type: string
     required:
     - account
@@ -12,15 +14,29 @@ definitions:
   controller.Register:
     properties:
       account:
+        example: account
         type: string
       email:
+        example: test123@gmail.com
         type: string
       password:
+        example: password
         type: string
     required:
     - account
     - email
     - password
+    type: object
+  controller.RegisterResponse:
+    properties:
+      data:
+        type: string
+      msg:
+        example: Successfully login.
+        type: string
+      status:
+        example: 0
+        type: integer
     type: object
 host: localhost:8080
 info:
@@ -77,9 +93,9 @@ paths:
   /users/register/:
     post:
       parameters:
-      - description: JSON data
+      - description: register
         in: body
-        name: body
+        name: register
         required: true
         schema:
           $ref: '#/definitions/controller.Register'
@@ -89,7 +105,9 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            items:
+              $ref: '#/definitions/controller.RegisterResponse'
+            type: array
       tags:
       - users
 swagger: "2.0"
