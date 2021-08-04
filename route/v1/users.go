@@ -34,5 +34,6 @@ func RouteUsers(r *gin.Engine, m *persist.RedisStore) {
 	auth.Use(RequestIDMiddleware)
 	{
 		auth.GET("/:id", cache.CacheByRequestURI(m, 2*time.Second), controller.NewUsersController().GetOne)
+		auth.POST("/upload", controller.OldUsersController().Upload )
 	}
 }

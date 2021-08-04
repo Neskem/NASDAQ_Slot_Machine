@@ -2,10 +2,10 @@ definitions:
   controller.Login:
     properties:
       account:
-        example: "000"
+        example: account
         type: string
       password:
-        example: "000"
+        example: password
         type: string
     required:
     - account
@@ -33,6 +33,17 @@ definitions:
         type: string
       msg:
         example: Successfully login.
+        type: string
+      status:
+        example: 0
+        type: integer
+    type: object
+  controller.UploadResponse:
+    properties:
+      file_name:
+        type: string
+      msg:
+        example: Successfully uploaded.
         type: string
       status:
         example: 0
@@ -70,6 +81,30 @@ paths:
           description: OK
           schema:
             type: string
+      tags:
+      - users
+  /users/auth/upload:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: users file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controller.UploadResponse'
+            type: array
       tags:
       - users
   /users/login/:

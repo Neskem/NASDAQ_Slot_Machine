@@ -65,8 +65,8 @@ func (u UsersController) GetOne(c *gin.Context) {
 }
 
 type Login struct {
-	Account string `json:"account" example:"000" binding:"required"`
-	Password string `json:"password" example:"000" binding:"required"`
+	Account string `json:"account" example:"account" binding:"required"`
+	Password string `json:"password" example:"password" binding:"required"`
 }
 
 type Register struct {
@@ -90,6 +90,12 @@ type RegisterResponse struct {
 	Status int64 `json:"status" example:"0"`
 	Msg string `json:"msg" example:"Successfully login."`
 	Data string `json:"data"`
+}
+
+type UploadResponse struct {
+	Status int64 `json:"status" example:"0"`
+	Msg string `json:"msg" example:"Successfully uploaded."`
+	FileName string `json:"file_name"`
 }
 // LoginOne RouteUsers @Summary
 // @Tags users
@@ -125,7 +131,7 @@ func(u UsersController) RegisterOne(c *gin.Context) {
 	var form Register
 	bindErr := c.BindJSON(&form)
 	if bindErr == nil {
-		// User regist
+		// User register
 		err := service.RegisterUser(form.Account, form.Password, form.Email)
 
 		if err == nil {
@@ -189,5 +195,31 @@ func generateToken(c *gin.Context, user *models.Users) {
 		0,
 		"Successfully login.",
 		data,
+	})
+}
+
+// Upload RouteUsers @Summary
+// @Tags users
+// @version 1.0
+// @produce application/json
+// @param token header string true "token"
+// @param file formData file true "users file"
+// @Success 200 {array} UploadResponse successful upload file
+// @Router /users/auth/upload [post]
+func (u UsersController) Upload(c *gin.Context) {
+	claims := c.MustGet("claims").(*middleware.CustomClaims)
+	if claims == nil {
+		c.AbortWithStatus(401)
+	}
+	file, _ := c.FormFile("file")
+	log.Println(file.Filename)
+	err := c.SaveUploadedFile(file, "./")
+	if err != nil{
+		c.AbortWithStatus(401)
+	}
+	c.JSON(http.StatusOK, UploadResponse{
+		Status: 0,
+		Msg: "Successfully uploaded",
+		FileName: file.Filename,
 	})
 }
