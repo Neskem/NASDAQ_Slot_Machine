@@ -35,6 +35,7 @@ func main() {
 	port := os.Getenv("PORT")
 	dbConfig := os.Getenv("DB_CONFIG")
 	app := gin.Default()
+	app.MaxMultipartMemory = 8 // Maximum uploaded size = 8 Mb
 	app.Use(middleware.CORSMiddleware())
 	db, err1 := database.InitDb(dbConfig)
 	if err1 != nil {

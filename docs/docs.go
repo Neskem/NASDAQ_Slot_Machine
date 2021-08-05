@@ -30,6 +30,46 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/users/auth/upload": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "users file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controller.UploadResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/auth/{id}": {
             "get": {
                 "produces": [
@@ -137,11 +177,11 @@ var doc = `{
             "properties": {
                 "account": {
                     "type": "string",
-                    "example": "000"
+                    "example": "account"
                 },
                 "password": {
                     "type": "string",
-                    "example": "000"
+                    "example": "password"
                 }
             }
         },
@@ -176,6 +216,22 @@ var doc = `{
                 "msg": {
                     "type": "string",
                     "example": "Successfully login."
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 0
+                }
+            }
+        },
+        "controller.UploadResponse": {
+            "type": "object",
+            "properties": {
+                "file_name": {
+                    "type": "string"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "Successfully uploaded."
                 },
                 "status": {
                     "type": "integer",

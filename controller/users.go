@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
@@ -65,8 +66,8 @@ func (u UsersController) GetOne(c *gin.Context) {
 }
 
 type Login struct {
-	Account string `json:"account" example:"000" binding:"required"`
-	Password string `json:"password" example:"000" binding:"required"`
+	Account string `json:"account" example:"account" binding:"required"`
+	Password string `json:"password" example:"password" binding:"required"`
 }
 
 type Register struct {
@@ -90,6 +91,12 @@ type RegisterResponse struct {
 	Status int64 `json:"status" example:"0"`
 	Msg string `json:"msg" example:"Successfully login."`
 	Data string `json:"data"`
+}
+
+type UploadResponse struct {
+	Status int64 `json:"status" example:"0"`
+	Msg string `json:"msg" example:"Successfully uploaded."`
+	FileName string `json:"file_name"`
 }
 // LoginOne RouteUsers @Summary
 // @Tags users
@@ -125,7 +132,7 @@ func(u UsersController) RegisterOne(c *gin.Context) {
 	var form Register
 	bindErr := c.BindJSON(&form)
 	if bindErr == nil {
-		// User regist
+		// User register
 		err := service.RegisterUser(form.Account, form.Password, form.Email)
 
 		if err == nil {
@@ -190,4 +197,51 @@ func generateToken(c *gin.Context, user *models.Users) {
 		"Successfully login.",
 		data,
 	})
+}
+
+// Upload RouteUsers @Summary
+// @Tags users
+// @version 1.0
+// @produce application/json
+// @Accept multipart/form-data
+// @param token header string true "token"
+// @param file formData file true "users file"
+// @Success 200 {array} UploadResponse successful upload file
+// @Router /users/auth/upload [post]
+func (u UsersController) Upload(c *gin.Context) {
+	log.Println("210")
+	claims := c.MustGet("claims").(*middleware.CustomClaims)
+	if claims == nil {
+		c.AbortWithStatus(401)
+		return
+	}
+	log.Println("215")
+	file, err1 := c.FormFile("file")
+	if err1 != nil {
+		log.Println("error: ", err1)
+		c.AbortWithStatus(403)
+	}
+	log.Println("filename: ", file.Filename)
+	fileDirectory := "/usr/local/go/src/NASDAQ_Slot_Machine/images/" + claims.Account + "/"
+	CreateDirIfNotExist(fileDirectory)
+	filePath := fileDirectory + file.Filename
+	err2 := c.SaveUploadedFile(file, filePath)
+	if err2 != nil{
+		log.Println("error: ", err2)
+		c.AbortWithStatus(401)
+	}
+	c.JSON(http.StatusOK, UploadResponse{
+		Status: 0,
+		Msg: "Successfully uploaded",
+		FileName: file.Filename,
+	})
+}
+
+func CreateDirIfNotExist(dir string) {
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err = os.MkdirAll(dir, 0755)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
