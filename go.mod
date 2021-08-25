@@ -3,6 +3,8 @@ module NASDAQ_Slot_Machine
 go 1.13
 
 require (
+	github.com/Valiben/gin_unit_test v0.0.0-20181205064931-674aee46d090 // indirect
+	github.com/ahmdrz/goinsta/v2 v2.4.5 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/chenyahui/gin-cache v1.0.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
